@@ -31,15 +31,11 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-const props = defineProps({
-  id: {
-    type: String,
-    default: ''
-  }
-})
+import {prescriptionApi} from "@/apis/api.ts";
+import {ElMessage} from "element-plus";
 const emit = defineEmits(['refresh'])
 const drawerVisible = ref(false);
-const loading = ref(true);
+const loading = ref(false);
 const PENDING = 'PENDING';
 const prescriptionDetail = ref({
   id: '',
@@ -50,28 +46,27 @@ const prescriptionDetail = ref({
 });
 
 const queryPrescriptionDetailById = (id: string) => {
-  prescriptionDetail.value =   {
-    "id": "RX123",
-    "patientId": "P001",
-    "pharmacyId": "ACME Pharma",
-    "drugs": [
-      { "drugId": "D001", "dosage": 400 },
-      { "drugId": "D002", "dosage": 500 }
-    ],
-    "status": "PENDING"
-  }
+  prescriptionApi.getPrescription(id).then(res => {
+    prescriptionDetail.value = res;
+  })
 }
-const openDrawer = () => {
+const openDrawer = (id: string) => {
   drawerVisible.value = true;
-  queryPrescriptionDetailById(props.id);
+  queryPrescriptionDetailById(id);
 }
 const handleFulfill = () => {
   loading.value = true;
-  setTimeout(() => {
-    emit('refresh');
+  prescriptionApi.fulfillPrescription(prescriptionDetail.value.id).then(res => {
     loading.value = false;
+    emit('refresh');
     drawerVisible.value = false;
-  }, 1000)
+    if (res.success) {
+      ElMessage.success('Fulfillment success!')
+    } else {
+      const errStr = res.errors.join(',')
+      ElMessage.error('Fulfillment failed! ' + errStr);
+    }
+  })
 }
 defineExpose({
   openDrawer

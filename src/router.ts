@@ -24,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/viewAuditLogs',
     name: 'viewAuditLogs',
     component: () => import('@/pages/viewAuditLogs/ViewAuditLogs.vue')
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    component: () => import('@/pages/setting/Setting.vue')
   }
 ]
 const router = createRouter({

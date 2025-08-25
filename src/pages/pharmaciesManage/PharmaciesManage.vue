@@ -13,34 +13,28 @@
     </el-table>
     <PharmaciesDrawer
         ref="pharmaciesDrawerRef"
-        :id="activeId"
     ></PharmaciesDrawer>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import PharmaciesDrawer from "@components/PharmaciesDrawer.vue";
-const originData = [
-  {
-    "id": "PH001",
-    "name": "Chengdu Main Branch",
-  },
-  {
-    "id": "PH002",
-    "name": "Chongqing Main Branch",
-  }
-]
+import { pharmacyApi } from "@/apis/api.ts";
 const tableData : any = ref([]);
 const activeId = ref('');
 const pharmaciesDrawerRef = ref();
 
 onMounted(() => {
-  tableData.value = originData;
+  queryData();
 })
-
+const queryData = () => {
+  pharmacyApi.getPharmacies().then(res => {
+    tableData.value = res;
+  })
+}
 const handleDetailClick = (pharmaciesId: string) => {
   activeId.value = pharmaciesId;
-  pharmaciesDrawerRef.value.openDrawer();
+  pharmaciesDrawerRef.value.openDrawer(activeId.value);
 }
 
 </script>

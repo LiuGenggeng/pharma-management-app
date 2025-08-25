@@ -17,54 +17,37 @@
   </el-table>
   <PrescriptionDrawer
       ref="prescriptionDrawerRef"
-      :id="activeId"
       @refresh="handleTableRefresh"
   ></PrescriptionDrawer>
 </template>
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import PrescriptionDrawer from "@components/PrescriptionDrawer.vue";
+import {prescriptionApi} from "@/apis/api.ts";
 
 const STATUS_TEXT: any = {
   'PENDING': 'PENDING',
   'FAILED': 'FAILED',
   'SUCCESS': 'SUCCESS',
 }
-const originData = [
-  {
-    "id": "RX123",
-    "patientId": "P001",
-    "pharmacyId": "ACME Pharma",
-    "drugs": [
-      { "drugId": "D001", "dosage": 400 },
-      { "drugId": "D002", "dosage": 500 }
-    ],
-    "status": "PENDING"
-  },
-  {
-    "id": "RX124",
-    "patientId": "P002",
-    "pharmacyId": "ACME Pharma ABC",
-    "drugs": [
-      { "drugId": "D001", "dosage": 400 },
-      { "drugId": "D003", "dosage": 600 }
-    ],
-    "status": "SUCCESS"
-  }
-]
+
 const tableData : any = ref([]);
 const activeId = ref('');
 const prescriptionDrawerRef = ref();
 onMounted(() => {
-  tableData.value = originData;
+  queryData();
 })
-
+const queryData = () => {
+  prescriptionApi.getPrescriptions().then(res => {
+    tableData.value = res;
+  })
+}
 const handleDetailClick = (prescriptionId: string) => {
   activeId.value = prescriptionId;
-  prescriptionDrawerRef.value.openDrawer();
+  prescriptionDrawerRef.value.openDrawer(activeId.value);
 }
 const handleTableRefresh = () => {
-  tableData.value = originData;
+  queryData();
 }
 </script>
 

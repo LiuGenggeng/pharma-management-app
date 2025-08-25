@@ -17,12 +17,12 @@
     <div>drugsRequested List</div>
     <el-table :data="data.drugsRequested">
       <el-table-column property="drugId" label="Id" width="150" />
-      <el-table-column property="drugName" label="Name"  />
+      <el-table-column property="dosage" label="Dosage"  />
     </el-table>
     <div>drugsDispensed List</div>
     <el-table :data="data.drugsDispensed">
       <el-table-column property="drugId" label="Id" width="150" />
-      <el-table-column property="drugName" label="Name"  />
+      <el-table-column property="dosage" label="Dosage"  />
     </el-table>
     <div v-if="data.status === STATUS_TEXT.FAILED">
       Fail Reason:

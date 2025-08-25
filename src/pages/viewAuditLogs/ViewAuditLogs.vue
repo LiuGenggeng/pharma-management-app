@@ -29,35 +29,7 @@
 import AuditSearchForm from "@/pages/viewAuditLogs/components/AuditSearchForm.vue";
 import {onMounted, ref} from "vue";
 import LogDetailDrawer from "@components/LogDetailDrawer.vue";
-const originData = [
-  {
-    "prescriptionId": "RX123",
-    "patientId": "P001",
-    "pharmacyId": "PH001",
-    "status": "FAILED",
-    "drugsRequested": [{
-      drugId: 'D001',
-      drugName: 'Ibuprofen',
-      dosage: 200
-    }, {
-      drugId: 'D002',
-      drugName: 'Suascjasc',
-      dosage: 300
-    }],
-    "drugsDispensed": [
-      {
-        drugId: 'D003',
-        drugName: 'Ibuprofen',
-        dosage: 200
-      }, {
-        drugId: 'D004',
-        drugName: 'Suascjasc',
-        dosage: 300
-      }
-    ],
-    "failureReasons": ["Drug expired", "Over allocation"]
-  }
-]
+import {auditLogApi, type AuditLogFilter} from "@/apis/api.ts";
 const STATUS_TEXT: any = {
   'PENDING': 'PENDING',
   'FAILED': 'FAILED',
@@ -68,10 +40,16 @@ const curPrescription = ref({});
 const logDetailDrawerRef = ref();
 
 onMounted(() => {
-  tableData.value = originData;
+  handleSearch();
 })
-const handleSearch = (formData) => {
-  tableData.value = originData;
+const handleSearch = (formData: AuditLogFilter = {}) => {
+  if (formData.status === 'ALL') {
+    formData.status = '';
+  }
+  auditLogApi.getAuditLogs(formData)
+    .then(res => {
+      tableData.value = res;
+    })
 }
 const handleDetailClick = (prescriptionInfo: any) => {
   curPrescription.value = prescriptionInfo;

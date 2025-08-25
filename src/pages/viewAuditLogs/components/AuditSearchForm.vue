@@ -1,10 +1,10 @@
 <template>
   <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-    <el-form-item label="drug">
-      <el-input v-model="searchForm.drug" placeholder="Approved by" />
+    <el-form-item label="patientId">
+      <el-input v-model.trim="searchForm.patientId" placeholder="patientId" />
     </el-form-item>
-    <el-form-item label="pharmacy">
-      <el-input v-model="searchForm.pharmacy" placeholder="Approved by" />
+    <el-form-item label="pharmacyId">
+      <el-input v-model.trim="searchForm.pharmacyId" placeholder="pharmacyId" />
     </el-form-item>
     <el-form-item label="status">
       <el-select
@@ -26,8 +26,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 const originFrom = {
-  drug: '',
-  pharmacy: '',
+  patientId: '',
+  pharmacyId: '',
   status: 'ALL'
 }
 const statusOptions: any = [
@@ -41,7 +41,9 @@ const searchForm = ref({
 });
 const emit = defineEmits(['search'])
 const onSubmit = () => {
-  emit('search', searchForm.value);
+  emit('search', {
+    ...searchForm.value
+  });
 }
 const reset = () => {
   searchForm.value = {

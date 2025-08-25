@@ -52,8 +52,8 @@
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确定</el-button>
+        <el-button @click="handleClose">cancel</el-button>
+        <el-button type="primary" @click="handleConfirm">confirm</el-button>
       </span>
     </template>
   </el-dialog>

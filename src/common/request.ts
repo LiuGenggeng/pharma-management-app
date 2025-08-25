@@ -8,18 +8,13 @@ interface HttpRequest {
   data?: object;
   params?: object;
   headers?: object;
-  showLoading?: boolean;
   method?: "POST" | "GET";
-  // 请求loading遮罩区域
-  loadingSelector?: string;
 }
 
 interface HttpResponse {
-  success?: boolean;
   code?: string;
   data?: object | Array<any>;
   message?: string;
-  traceId?: string;
 }
 
 const instance = axios.create({
@@ -39,7 +34,7 @@ const instance = axios.create({
 instance.interceptors.response.use(
   resp => {
     const data = resp.data;
-    if (data.success === true || resp.status === 200) {
+    if (resp.status === 200) {
       return data;
     }
     return Promise.reject(data.message)
@@ -63,14 +58,10 @@ const post = (config: HttpRequest) => {
       method: "POST"
     })?.then((res: HttpResponse) => {
       if (res) {
-        if (res.success) {
-          resolve(res.data);
-        } else {
-          reject(res.message || "")
-        }
+        resolve(res.data);
       }
     }).catch((err) => {
-      reject(err && err.message ? err.message : "请求失败");
+      reject(err && err.message ? err.message : "request failed");
     });
   });
 }
@@ -82,19 +73,16 @@ const get = (config: HttpRequest) => {
       method: "GET"
     })?.then((res: HttpResponse) => {
       if (res) {
-        if (res.success) {
-          resolve(res.data);
-        } else {
-          reject(res.message || "")
-        }
+        resolve(res.data);
       }
     }).catch((err) => {
-      reject(err && err.message ? err.message : "请求失败");
+      reject(err && err.message ? err.message : "request failed");
     });
   });
 }
 
 export {
   post,
-  get
+  get,
+  type HttpRequest
 };

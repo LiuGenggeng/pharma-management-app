@@ -20,12 +20,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-const props = defineProps({
-  id: {
-    type: String,
-    default: ''
-  }
-})
+import {type Pharmacy, pharmacyApi} from "@/apis/api.ts";
 const drawerVisible = ref(false);
 
 const pharmaciesDetail = ref({
@@ -35,18 +30,13 @@ const pharmaciesDetail = ref({
 });
 
 const queryPharmaciesDetailById = (id: string) => {
-  pharmaciesDetail.value = {
-    "id": "PH001",
-    "name": "Chengdu Main Branch",
-    "allocatedDrugs": [
-      { "drugId": "D001", "drugName": "Ibuprofen", "limit": 200 },
-      { "drugId": "D002", "drugName": "Paracetamol", "limit": 100 }
-    ]
-  }
+  pharmacyApi.getPharmacy(id).then((res: Pharmacy) => {
+    pharmaciesDetail.value = res;
+  })
 }
-const openDrawer = () => {
+const openDrawer = (id: string) => {
   drawerVisible.value = true;
-  queryPharmaciesDetailById(props.id);
+  queryPharmaciesDetailById(id);
 }
 defineExpose({
   openDrawer
