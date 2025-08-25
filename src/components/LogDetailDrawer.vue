@@ -34,7 +34,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-const props = defineProps(['data'])
+defineProps(['data'])
 const drawerVisible = ref(false);
 const openDrawer = () => {
   drawerVisible.value = true;

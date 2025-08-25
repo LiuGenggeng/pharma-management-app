@@ -49,7 +49,7 @@ const handleConfirm = (formData:any) => {
       ElMessage.success('Add drug successful!！')
       queryDrugs();
     } else {
-      ElMessage.success(`Add drug failed！${err}`)
+      ElMessage.success(`Add drug failed!`)
     }
   }, (err) => {
     ElMessage.success(`Add drug failed！${err}`)

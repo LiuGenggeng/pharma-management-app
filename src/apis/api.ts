@@ -82,7 +82,7 @@ export const drugApi = {
   },
   
   // 添加新药物
-  addDrug: (drugData: Drug): Promise<Drug> => {
+  addDrug: (drugData: Drug): Promise<any> => {
     const config: HttpRequest = {
       url: '/drugs',
       data: drugData,
@@ -129,7 +129,7 @@ export const prescriptionApi = {
   },
   
   // 完成处方配药
-  fulfillPrescription: (id: string): Promise<{ success: boolean; message: string }> => {
+  fulfillPrescription: (id: string): Promise<{ success: boolean; message: string, errors: any }> => {
     const config: HttpRequest = {
       url: `/prescriptions/${id}/fulfill`,
     };

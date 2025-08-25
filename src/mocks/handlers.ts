@@ -1,21 +1,23 @@
-import { http, graphql, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_LOCALSTORAGE_KEY } from "@/mocks/initMockData.ts";
 import { storage } from "@/common/utils/storage.ts";
-import type {AllocatedDrug, AuditLog, AuditLogFilter, Drug, Pharmacy, Prescription} from "@/apis/api.ts";
+import type {AllocatedDrug, AuditLog, Drug, Pharmacy, Prescription} from "@/apis/api.ts";
 import {getQueryParams} from "@/common/utils/queryParams.ts";
 
 export const handlers = [
   http.get('/drugs', () => {
     const storageData: any = storage.get(MOCK_LOCALSTORAGE_KEY, {});
     const today = new Date().toISOString().slice(0, 10);
-    storageData.drugs.forEach(drug => {
-      drug.isExpired = drug.expiry.localeCompare(today) === -1;
-    })
+    if (storageData.drugs.length) {
+      storageData.drugs.forEach((drug: Drug) => {
+        drug.isExpired = drug.expiry.localeCompare(today) === -1;
+      })
+    }
     return HttpResponse.json(storageData.drugs || []);
   }),
   http.post('/drugs', async ({ request }) => {
     try {
-      const body = await request.json();
+      const body: any = await request.json();
       const storageData: any = storage.get(MOCK_LOCALSTORAGE_KEY, {});
       const drugs = storageData.drugs || [];
       // 3. 处理新药物数据（示例）
@@ -42,7 +44,7 @@ export const handlers = [
       );
     }
   }),
-  http.get('/pharmacies', async({params}) => {
+  http.get('/pharmacies', async({}) => {
     const storageData: any = storage.get(MOCK_LOCALSTORAGE_KEY, {});
     const pharmacies = storageData.pharmacies || [];
     return HttpResponse.json(pharmacies);
