@@ -1,5 +1,47 @@
-# Vue 3 + TypeScript + Vite
+# Pharma Management App
+## Project setup
+```
+npm install
+```
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+### Compiles and hot-reloads for development
+```
+npm run dev
+```
+### Compiles and minifies for production
+```
+npm run build
+```
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+### 目录结构如下
+
+```aiignore
+src/
+├── components/ # 通用组件
+│ ├── DrugForm.vue # 药品表单组件
+│ └── DrugTable.vue # 药品表格组件
+├── views/ # 页面组件
+│ ├── DrugManagement.vue
+│ ├── PharmacyManagement.vue
+│ ├── PrescriptionManagement.vue
+│ └── AuditLogs.vue
+├── stores/ # Pinia状态管理
+│ ├── drug.ts
+│ ├── pharmacy.ts
+│ ├── prescription.ts
+│ └── audit.ts
+├── services/ # API服务层
+│ ├── api.ts # 基础API配置
+│ ├── drugService.ts # 药品相关API
+│ ├── pharmacyService.ts
+│ ├── prescriptionService.ts
+│ └── mockData.ts # 模拟数据
+├── types/ # TypeScript类型定义
+│ └── index.ts
+├── utils/ # 工具函数
+│ └── validation.ts # 验证函数
+├── router/ # 路由配置
+│ └── index.ts
+├── App.vue
+└── main.ts
+```

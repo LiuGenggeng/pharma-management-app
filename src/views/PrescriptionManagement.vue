@@ -195,7 +195,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Clock, Check, Close, Document } from '@element-plus/icons-vue'
+import { Clock, Check, Close } from '@element-plus/icons-vue'
 import { usePrescriptionStore } from '@/stores/prescription'
 import { useDrugStore } from '@/stores/drug'
 import { usePharmacyStore } from '@/stores/pharmacy'

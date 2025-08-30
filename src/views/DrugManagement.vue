@@ -146,7 +146,7 @@ const rules: FormRules = {
   expiry: [
     { required: true, message: '请选择过期日期', trigger: 'change' },
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         if (dayjs(value).isBefore(dayjs())) {
           callback(new Error('过期日期不能早于今天'))
         } else {

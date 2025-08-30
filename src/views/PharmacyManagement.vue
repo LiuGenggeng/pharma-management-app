@@ -158,6 +158,8 @@ const filteredPharmacies = computed(() => {
 // 搜索处理
 const handleSearch = (keyword: string) => {
   // 实时搜索，这里可以添加防抖逻辑
+  // 目前本地搜索 不需要考虑input事件 直接计算属性就可以搞定
+  console.log('keyword', keyword)
 }
 
 // 行点击处理
