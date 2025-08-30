@@ -6,15 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "format": "prettier --write src/"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.11.0",
-    "element-plus": "^2.11.0",
+    "dayjs": "^1.11.18",
+    "element-plus": "^2.11.1",
+    "pinia": "^3.0.3",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.8.3",
