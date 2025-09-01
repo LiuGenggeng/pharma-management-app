@@ -43,19 +43,21 @@
       </el-col>
     </el-row>
 
+    <!-- 使用通用筛选组件 -->
+    <CommonFilter
+        v-model="filters"
+        :filters="filterConfig"
+        :show-reset-button="true"
+        reset-button-text="重置筛选"
+        @change="handleFiltersChange"
+        @reset="handleFiltersReset"
+    />
+
     <!-- 主内容卡片 -->
     <el-card class="main-card">
       <template #header>
         <div class="card-header">
           <span>处方管理</span>
-          <div class="filter-controls">
-            <el-select v-model="statusFilter" placeholder="按状态筛选" style="width: 150px">
-              <el-option label="全部" value="ALL" />
-              <el-option label="待处理" value="PENDING" />
-              <el-option label="已履行" value="FULFILLED" />
-              <el-option label="履行失败" value="FAILED" />
-            </el-select>
-          </div>
         </div>
       </template>
 
@@ -65,7 +67,7 @@
           v-loading="prescriptionStore.loading"
           style="width: 100%"
           @row-click="handleRowClick"
-          row-style="cursor: pointer"
+          :row-style="{cursor: 'pointer'}"
       >
         <el-table-column prop="id" label="处方ID" width="100" />
         <el-table-column prop="patientName" label="患者姓名" width="120" />
@@ -201,17 +203,96 @@ import { useDrugStore } from '@/stores/drug'
 import { usePharmacyStore } from '@/stores/pharmacy'
 import type { PrescriptionDetail } from '@/types'
 import dayjs from 'dayjs'
+import CommonFilter from '@/components/Filter.vue'
 
 const prescriptionStore = usePrescriptionStore()
 const drugStore = useDrugStore()
 const pharmacyStore = usePharmacyStore()
 
-const statusFilter = ref('ALL')
 const showDetailDialog = ref(false)
+
+// 筛选器的值
+const filters = ref({
+  status: '',
+  patientName: '',
+  pharmacyId: '',
+  prescriptionId: ''
+})
+
+// 筛选器配置
+const filterConfig = computed(() => [
+  {
+    key: 'status',
+    type: 'select',
+    placeholder: '选择状态',
+    clearable: true,
+    options: [
+      { label: '全部状态', value: '' },
+      { label: '待处理', value: 'PENDING' },
+      { label: '已履行', value: 'FULFILLED' },
+      { label: '履行失败', value: 'FAILED' }
+    ],
+    defaultValue: ''
+  },
+  {
+    key: 'patientName',
+    type: 'input',
+    placeholder: '输入患者姓名',
+    clearable: true,
+    defaultValue: ''
+  },
+  {
+    key: 'pharmacyId',
+    type: 'select',
+    placeholder: '选择药房',
+    clearable: true,
+    options: [
+      { label: '全部药房', value: '' },
+      ...pharmacyStore.pharmacies.map(pharmacy => ({
+        label: pharmacy.name,
+        value: pharmacy.id
+      }))
+    ],
+    defaultValue: ''
+  },
+  {
+    key: 'prescriptionId',
+    type: 'input',
+    placeholder: '输入处方ID',
+    clearable: true,
+    defaultValue: ''
+  }
+])
 
 // 过滤后的处方列表
 const filteredPrescriptions = computed(() => {
-  return prescriptionStore.filterByStatus(statusFilter.value)
+  let result = prescriptionStore.prescriptions
+
+  // 按状态筛选
+  if (filters.value.status) {
+    result = result.filter(item => item.status === filters.value.status)
+  }
+
+  // 按患者姓名筛选
+  if (filters.value.patientName) {
+    result = result.filter(item =>
+        item.patientName.toLowerCase().includes(filters.value.patientName.toLowerCase())
+    )
+  }
+
+  // 按药房筛选
+  if (filters.value.pharmacyId) {
+    result = result.filter(item => item.pharmacyId === filters.value.pharmacyId)
+  }
+
+  // 按处方ID筛选
+  if (filters.value.prescriptionId) {
+    result = result.filter(item =>
+        item.id.toLowerCase().includes(filters.value.prescriptionId.toLowerCase())
+    )
+  }
+
+  return result
 })
 
 // 当前处方的药品详情
@@ -224,6 +305,18 @@ const currentDrugDetails = computed(() => {
 const canFulfill = computed(() => {
   return currentDrugDetails.value.every(drug => drug.available)
 })
+
+// 处理筛选条件变化
+const handleFiltersChange = (newFilters: any) => {
+  console.log('筛选条件变化:', newFilters)
+  // 使用emit传递的最新值进行筛选（这里已经通过computed自动响应了）
+}
+
+// 处理重置筛选
+const handleFiltersReset = (resetFilters: any) => {
+  console.log('重置筛选:', resetFilters)
+  // 重置后也会自动通过computed响应
+}
 
 // 状态标签类型
 const getStatusTagType = (status: string) => {
@@ -326,12 +419,6 @@ onMounted(async () => {
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.filter-controls {
-  display: flex;
-  gap: 10px;
   align-items: center;
 }
 

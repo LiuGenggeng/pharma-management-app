@@ -53,68 +53,21 @@
       </template>
 
       <!-- 筛选器 -->
-      <div class="filters-section">
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-select
-                v-model="filters.patientId"
-                placeholder="选择患者"
-                clearable
-                @change="applyFilters"
-            >
-              <el-option label="全部患者" value="ALL" />
-              <el-option
-                  v-for="patient in auditStore.patients"
-                  :key="patient.id"
-                  :label="patient.name"
-                  :value="patient.id"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-select
-                v-model="filters.pharmacyId"
-                placeholder="选择药房"
-                clearable
-                @change="applyFilters"
-            >
-              <el-option label="全部药房" value="ALL" />
-              <el-option
-                  v-for="pharmacy in auditStore.pharmaciesForFilter"
-                  :key="pharmacy.id"
-                  :label="pharmacy.name"
-                  :value="pharmacy.id"
-              />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-select
-                v-model="filters.status"
-                placeholder="选择状态"
-                clearable
-                @change="applyFilters"
-            >
-              <el-option label="全部状态" value="ALL" />
-              <el-option label="成功" value="SUCCESS" />
-              <el-option label="失败" value="FAILED" />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-button type="primary" @click="resetFilters">
-              <el-icon><Refresh /></el-icon>
-              重置筛选
-            </el-button>
-          </el-col>
-        </el-row>
-      </div>
-
+      <CommonFilter
+          v-model="filters"
+          :filters="filterConfig"
+          :show-reset-button="true"
+          reset-button-text="重置筛选"
+          @change="handleFiltersChange"
+          @reset="handleFiltersReset"
+      />
       <!-- 审计日志表格 -->
       <el-table
           :data="filteredLogs"
           v-loading="auditStore.loading"
           style="width: 100%"
           @row-click="handleRowClick"
-          row-style="cursor: pointer"
+          :row-style="{cursor: 'pointer'}"
       >
         <el-table-column prop="prescriptionId" label="处方ID" width="120" />
         <el-table-column prop="patientName" label="患者" width="120" />
@@ -242,9 +195,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Document, CircleCheck, CircleClose, Refresh } from '@element-plus/icons-vue'
+import CommonFilter from '@/components/Filter.vue'
 import { useAuditStore } from '@/stores/audit'
 import { useDrugStore } from '@/stores/drug'
 import type { AuditLogDetail, AuditLogFilters } from '@/types'
@@ -268,8 +222,9 @@ const filters = reactive<AuditLogFilters>({
 const filteredLogs = ref<AuditLogDetail[]>([])
 
 // 应用筛选
-const applyFilters = () => {
-  filteredLogs.value = auditStore.filterAuditLogs(filters)
+const applyFilters = (filterValues = filters) => {
+  filteredLogs.value = auditStore.filterAuditLogs(filterValues)
+  console.log(filteredLogs.value);
 }
 
 // 重置筛选
@@ -281,7 +236,49 @@ const resetFilters = () => {
   filters.endDate = ''
   applyFilters()
 }
-
+// 筛选条件
+const filterConfig = computed(() => [
+  {
+    key: 'patientId',
+    type: 'select',
+    placeholder: '选择患者',
+    clearable: true,
+    options: [
+      { label: '全部患者', value: 'ALL' },
+      ...auditStore.patients.map(patient => ({
+        label: patient.name,
+        value: patient.id
+      }))
+    ],
+    defaultValue: ''
+  },
+  {
+    key: 'pharmacyId',
+    type: 'select',
+    placeholder: '选择药房',
+    clearable: true,
+    options: [
+      { label: '全部药房', value: 'ALL' },
+      ...auditStore.pharmaciesForFilter.map(pharmacy => ({
+        label: pharmacy.name,
+        value: pharmacy.id
+      }))
+    ],
+    defaultValue: ''
+  },
+  {
+    key: 'status',
+    type: 'select',
+    placeholder: '选择状态',
+    clearable: true,
+    options: [
+      { label: '全部状态', value: 'ALL' },
+      { label: '成功', value: 'SUCCESS' },
+      { label: '失败', value: 'FAILED' }
+    ],
+    defaultValue: ''
+  }
+])
 // 格式化日期时间
 const formatDateTime = (dateStr: string) => {
   return dayjs(dateStr).format('YYYY-MM-DD HH:mm:ss')
@@ -315,6 +312,18 @@ onMounted(async () => {
   ])
   applyFilters() // 初始化显示所有数据
 })
+
+// 处理筛选条件变化
+const handleFiltersChange = (newFilters) => {
+  // 这里执行你的筛选逻辑
+  applyFilters(newFilters)
+}
+
+// 处理重置筛选
+const handleFiltersReset = (resetFilters) => {
+  // 这里执行重置后的逻辑
+  applyFilters(resetFilters)
+}
 </script>
 
 <style scoped>

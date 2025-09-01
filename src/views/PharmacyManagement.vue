@@ -40,7 +40,7 @@
           v-loading="pharmacyStore.loading"
           style="width: 100%"
           @row-click="handleRowClick"
-          row-style="cursor: pointer"
+          :row-style="{cursor: 'pointer'}"
       >
         <el-table-column prop="id" label="药房ID" width="120" />
         <el-table-column prop="name" label="药房名称" width="200" />
